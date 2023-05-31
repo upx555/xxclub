@@ -1,0 +1,58 @@
+UCS_setExternalClockSource (uint32_t XT1CLK_frequency, uint32_tXT2CLK_frequency)；设置外部时钟源集成 ldo
+
+ UCS_initClockSignal (uint8_t selectedClockSignal, uint16_t clockSource, uint16_tclockSourceDivider)；初始化一个时钟信号
+
+ UCS_turnOnLFXT1 (uint16_t xt1drive, uint8_t xcap）；以低频模式初始化 xt1晶体振荡器
+
+ UCS_turnOnHFXT1 (uint16_t xt1drive)；以高频模式初始化 xt1晶体振荡器。
+
+UCS_bypassXT1 (uint8_t highOrLowFrequency)；绕过 xt1晶体振荡器。
+
+（bool） UCS_turnOnLFXT1WithTimeout (uint16_t xt1drive, uint8_t xcap, uint16_t timeout)；使用超时在低频模式初始化 xt1晶体振荡器。
+
+（bool） UCS_turnOnHFXT1WithTimeout (uint16_t xt1drive, uint16_t timeout）；使用超时在高频模式初始化 xt1晶体振荡器
+
+（bool）UCS_bypassXT1WithTimeout (uint8_t highOrLowFrequency, uint16_t timeout)；超时绕过 xt1晶体振荡器。
+
+UCS_turnOffXT1 (void)；用 xt1off 位停止 xt1振荡器。
+
+UCS_turnOnXT2 (uint16_t xt2drive）；初始化 xt2晶体振荡器。
+
+（bool）UCS_turnOnXT2WithTimeout (uint16_t xt2drive, uint16_t timeout)； 用 timeout 初始化 xt2晶体振荡器
+
+（bool） UCS_bypassXT2WithTimeout (uint16_t timeout)；超时绕过 xt2晶体振荡器。
+
+UCS_turnOffXT2 (void)；用 xt2off 位阻止 xt2振荡器
+
+UCS_initFLLSettle (uint16_t fsystem, uint16_t ratio）； 将 dco 初始化为一个频率，该频率是参考频率到 fll 的倍数
+
+UCS_initFLL (uint16_t fsystem, uint16_t ratio)；将 dco 初始化为一个频率，该频率是参考频率到 fll 的倍数。
+
+UCS_enableClockRequest (uint8_t selectClock)；启用条件模块请求
+
+UCS_disableClockRequest (uint8_t selectClock)；禁用条件模块请求。
+
+（数值） UCS_getFaultFlagStatus (uint8_t mask)；获取当前的 ucs 错误标志状态。
+
+UCS_clearFaultFlag (uint8_t mask）；清除当前掩码位的 ucs 错误标志状态。
+
+ UCS_turnOffSMCLK (void)；用 smcloff 关闭 smclok。
+
+UCS_turnOnSMCLK (void)； 用 smcloff 开启 smclok。
+
+ （数值）UCS_getACLK (void) ；调出当前的 aclk 频率。
+
+（数值）UCS_getSMCLK (void)；调出当前 smcck 频率
+
+（数值）UCS_getMCLK (void)；调出当前的MCLK频率。
+
+（数值）UCS_clearAllOscFlagsWithTimeout (uint16_t timeout)；清除所有振荡器的标志。
+
+
+
+
+
+
+
+
+

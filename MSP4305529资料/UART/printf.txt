@@ -1,0 +1,17 @@
+#include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
+void UART_printf(uint16_t baseAddress, const char *format,...)
+{
+    uint32_t length;
+    va_list args;
+    uint32_t i;
+    char TxBuffer[128] = {0};
+
+    va_start(args, format);
+    length = vsnprintf((char*)TxBuffer, sizeof(TxBuffer)+1, (char*)format, args);
+    va_end(args);
+
+    for(i = 0; i < length; i++)
+        USCI_A_UART_transmitData(baseAddress, TxBuffer[i]);
+}

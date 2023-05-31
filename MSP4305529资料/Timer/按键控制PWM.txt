@@ -1,0 +1,160 @@
+#include "driverlib.h"
+
+#define CPU_F ((double)1105920)//CPU主频 MCLK=11.0592MHz
+#define delay_us(x) __delay_cycles((long)(CPU_F*(double)x/1000000.0)) //微秒
+#define delay_ms(x) __delay_cycles((long)(CPU_F*(double)x/1000.0)) //毫秒
+
+void SystemClock_Init(void)
+{
+    PMM_setVCore(PMM_CORE_LEVEL_3);     //高主频工作需要较高的核心电压
+
+    //XT1引脚复用
+    GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN4);
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN5);
+
+    //起振XT1
+    UCS_turnOnLFXT1(UCS_XT1_DRIVE_3,UCS_XCAP_3);
+
+    //XT2引脚复用
+    GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P5, GPIO_PIN2);
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN3);
+
+    //起振XT2
+    UCS_turnOnXT2(UCS_XT2_DRIVE_4MHZ_8MHZ);
+
+    //XT2作为FLL参考时钟，先8分频，再50倍频 4MHz / 8 * 50 = 25MHz
+    UCS_initClockSignal(UCS_FLLREF, UCS_XT2CLK_SELECT, UCS_CLOCK_DIVIDER_8);
+    UCS_initFLLSettle(25000, 50);
+
+    //XT1作为ACLK时钟源 = 32768Hz
+    UCS_initClockSignal(UCS_ACLK, UCS_XT1CLK_SELECT, UCS_CLOCK_DIVIDER_1);
+
+    //DCOCLK作为MCLK时钟源 = 25MHz
+    UCS_initClockSignal(UCS_MCLK, UCS_DCOCLK_SELECT, UCS_CLOCK_DIVIDER_1);
+
+    //DCOCLK作为SMCLK时钟源 = 25MHz
+    UCS_initClockSignal(UCS_SMCLK, UCS_DCOCLK_SELECT, UCS_CLOCK_DIVIDER_1);
+
+    //设置外部时钟源的频率，使得在调用UCS_getMCLK, UCS_getSMCLK 或 UCS_getACLK时可得到正确值
+    UCS_setExternalClockSource(32768, 4000000);
+}
+
+#define TIMER_PERIOD 12500
+#define TIMER_PERIOD 12500
+void Timer_A_PWM_Init(void)
+{
+    Timer_A_outputPWMParam htim = {0};
+    //P1.2复用输出
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1, GPIO_PIN2);
+    //时钟源选为SMCLK = 25MHz
+    htim.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
+    //分频系数设为40
+    htim.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_40;
+    //装载值设为12500 - 1
+    htim.timerPeriod = TIMER_PERIOD - 1;
+    //P1.2 对应 TA0.1 故设为TIMER_A_CAPTURECOMPARE_REGISTER_1
+    htim.compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1;
+    htim.compareOutputMode = TIMER_A_OUTPUTMODE_RESET_SET;
+    //初始比较值为装载值的一半 即初始占空比为50%
+    htim.dutyCycle = TIMER_PERIOD / 2;
+    //P1.2 对应 TA0.1 为TIMER_A0_BASE
+    Timer_A_outputPWM(TIMER_A0_BASE, &htim);
+}
+
+
+void KEY_S1_Init(void)
+{
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN1);
+    //P2.1 interrupt enabled
+    GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN1);  //使能中断
+    //P2.1 Hi/Lo edge
+    GPIO_selectInterruptEdge(GPIO_PORT_P2, GPIO_PIN1, GPIO_HIGH_TO_LOW_TRANSITION); //设置中断类型
+    //P2.1 IFG cleared
+    GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN1);   //清除中断标志位
+}
+
+void KEY_S2_Init(void)
+{
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1);
+    //P2.1 interrupt enabled
+    GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1);  //使能中断
+    //P2.1 Hi/Lo edge
+    GPIO_selectInterruptEdge(GPIO_PORT_P1, GPIO_PIN1, GPIO_HIGH_TO_LOW_TRANSITION); //设置中断类型
+    //P2.1 IFG cleared
+    GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN1);   //清除中断标志位
+}
+
+int main(void)
+{
+    WDT_A_hold(WDT_A_BASE);
+    SystemClock_Init();
+
+    Timer_A_PWM_Init();
+
+    KEY_S1_Init();
+    KEY_S2_Init();
+
+    //interrupts enabled
+    __bis_SR_register(GIE);
+
+    while(1)
+    {
+
+    }
+}
+
+//******************************************************************************
+//
+//This is the PORT2_VECTOR interrupt vector service routine
+//
+//******************************************************************************
+#pragma vector=PORT2_VECTOR     // P2口中断源
+__interrupt
+void Port_2 (void)              // 声明一个中断服务程序，名为Port_2()
+{
+    if(GPIO_getInterruptStatus(GPIO_PORT_P2, GPIO_PIN1))
+    {
+        delay_ms(20);
+        if(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1))
+        {
+            //P1.0 = toggle
+            Timer_A_setCompareValue
+            (
+                    TIMER_A0_BASE,
+                    TIMER_A_CAPTURECOMPARE_REGISTER_1,
+                    Timer_A_getCaptureCompareCount(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_1) - TIMER_PERIOD / 20
+            );
+            while(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1));
+        }
+        //P2.1 IFG cleared
+        GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN1);
+    }
+}
+
+//******************************************************************************
+//
+//This is the PORT1_VECTOR interrupt vector service routine
+//
+//******************************************************************************
+#pragma vector=PORT1_VECTOR     // P2口中断源
+__interrupt
+void Port_1 (void)              // 声明一个中断服务程序，名为Port_1()
+{
+    if(GPIO_getInterruptStatus(GPIO_PORT_P1, GPIO_PIN1))
+    {
+        delay_ms(20);
+        if(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1))
+        {
+            //P1.0 = toggle
+            Timer_A_setCompareValue
+            (
+                    TIMER_A0_BASE,
+                    TIMER_A_CAPTURECOMPARE_REGISTER_1,
+                    Timer_A_getCaptureCompareCount(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_1) + TIMER_PERIOD / 20
+            );
+            while(!GPIO_getInputPinValue(GPIO_PORT_P1, GPIO_PIN1));
+        }
+        //P2.1 IFG cleared
+        GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN1);
+    }
+}

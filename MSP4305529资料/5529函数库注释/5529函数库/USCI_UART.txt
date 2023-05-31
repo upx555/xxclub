@@ -1,0 +1,72 @@
+(bool) USCI_A_UART_init (uint16_t baseAddress, USCI_A_UART_initParam ∗param);Uart 块的高级初始化程序。
+
+ USCI_A_UART_transmitData (uint16_t baseAddress, uint8_t transmitData);把 uart 模块中的一个字节放入并传入初始化函数
+
+(数值)USCI_A_UART_receiveData (uint16_t baseAddress)；接收一个已经发送到 uart 模块的字节。
+ 
+ USCI_A_UART_enableInterrupt (uint16_t baseAddress, uint8_t mask)；使能中断
+
+ USCI_A_UART_disableInterrupt (uint16_t baseAddress, uint8_t mask)；禁止中断
+
+ （数值）USCI_A_UART_getInterruptStatus (uint16_t baseAddress, uint8_t mask)； 获取当前的 uart 中断状态
+
+USCI_A_UART_clearInterrupt (uint16_t baseAddress, uint8_t mask)；清除掉中断源。
+
+ USCI_A_UART_enable (uint16_t baseAddress)；使能UART
+
+ USCI_A_UART_disable (uint16_t baseAddress);禁止UART
+
+(数值) USCI_A_UART_queryStatusFlags (uint16_t baseAddress, uint8_t mask)；获取当前 uart 状态标志。
+
+USCI_A_UART_setDormant (uint16_t baseAddress)；将 uart 模块设置为休眠模式
+
+ USCI_A_UART_resetDormant (uint16_t baseAddress)；唤醒uart
+
+ USCI_A_UART_transmitAddress (uint16_t baseAddress, uint8_t transmitAddress)；根据选定的多处理器模式，将下一个要传输的字节标记为地址
+
+ USCI_A_UART_transmitBreak (uint16_t baseAddress)； 传输中断。
+
+ （数值）USCI_A_UART_getReceiveBufferAddressForDMA (uint16_t baseAddress)；在 dma 模式中获取 uart 的 rx 缓冲区的地址
+
+ （数值）USCI_A_UART_getTransmitBufferAddressForDMA (uint16_t baseAddress)；在 dma 模式中获取 uart 的 tx 缓冲区的地址
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+PMM_enableSvsL (void）；使得低端的 svs 电路
+PMM_disableSvsL (void）； 使低端 svs 电路失效
+
+PMM_enableSvmL (void)；使低端支持向量机电路
+ PMM_disableSvmL (void)；禁止低端支持向量机电路
+
+PMM_enableSvsH (void)；使高端 svs 电路成为可能
+PMM_disableSvsH (void)；禁止高端 svs 电路
+
+PMM_enableSvmH (void)；使高端支持向量机电路
+ PMM_disableSvmH (void)；禁止高端支持向量机电路
+
+PMM_enableSvsLSvmL (void)；使低端 svs 和支持向量机电路
+ PMM_disableSvsLSvmL (void)；禁止低端 svs 和支持向量机电路
+
+PMM_enableSvsHSvmH (void)；使高端 svs 和支持向量机电路。
+PMM_disableSvsHSvmH (void);禁止高端 svs 和支持向量机电路。
+
+PMM_enableSvsLReset (void);当低压事件被低端 svs 注册时，允许 por 信号生成
+PMM_disableSvsLReset (void);当低端 svs 注册低电压事件时，禁用 por 信号生成。
+
+ PMM_enableSvmLInterrupt (void);当低电压事件被低端支持向量机注册时，允许中断生成
+ PMM_disableSvmLInterrupt (void);
+
+PMM_enableSvsHReset (void);在高端 svs 注册低电压事件时，使 por 信号生成成为可能
+PMM_disableSvsHReset (void);
+
+PMM_enableSvmHInterrupt (void);当低电压事件被高端支持向量机注册时，允许中断生成
+ PMM_disableSvmHInterrupt (void);
+
+PMM_clearPMMIFGS (void);清除所有 pmm 的中断标志
+
+PMM_enableSvsLInLPMFastWake (void);通过从 lpm2、 lpm3和 lpm4启用 twake-fast 来启用 lpm 中的超级管理器低端
+PMM_enableSvsLInLPMSlowWake (void);通过 twake-up-slow 从 lpm2、 lpm3和 lpm4启用 lpm 中的超级管理器 low 端
+PMM_disableSvsLInLPMFastWake (void);通过 lpm2、 lpm3和 lpm4的 twake-fast 来使 lpm 中的主管低端瘫痪。
+PMM_disableSvsLInLPMSlowWake (void);用 twake-up-slow 从 lpm2，lpm3，和 lpm4使 lpm 中的主管低端瘫痪。
+
+ PMM_enableSvsHInLPMNormPerf (void);用 tpd = 20 s (1)在 lpm 中启用超级管理器高端
+ PMM_enableSvsHInLPMFullPerf (void);用 tpd = 2.5 s (1)在 lpm 中启用超级管理器高端
+PMM_disableSvsHInLPMNormPerf (void);在 lpm 中禁用主管高端，tpd = 20 s (1)
+ PMM_disableSvsHInLPMFullPerf (void);在 lpm 中禁用主管高端，tpd = 2.5 s (1)
+PMM_optimizeSvsLInLPMFastWake (void);优化以提供 lpm2，lpm3和 lpm4最小功率的快速唤醒。
+PMM_optimizeSvsHInLPMFullPerf (void);在 lpm 中以最小功率提供 tpd = 2.5 s (1)
+
+(数值)PMM_setVCoreUp (uint8_t level)；把 vcore 提高一级。
+（数值）PMM_setVCoreDown (uint8_t level）；降低 vcore 一级
+
+（bool） PMM_setVCore (uint8_t level)；把 vcore 设定到预期水平
+
+ （数值）PMM_getInterruptStatus (uint16_t mask)；获取中断状态
+
+

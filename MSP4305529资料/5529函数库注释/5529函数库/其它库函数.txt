@@ -1,0 +1,19 @@
+WDT_A_hold(WDT_A_BASE);    关闭看门狗（库工程）
+WDTCTL =WDTPW | WDTHOLD;关闭看门狗（自己的工程）
+__delay_cycles(1000000)；延迟
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Writing by dwb

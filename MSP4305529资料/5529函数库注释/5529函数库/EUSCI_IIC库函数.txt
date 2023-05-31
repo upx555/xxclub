@@ -1,0 +1,152 @@
+调用顺序
+1、EUSCI_B_I2C_initMaster
+一些基础配置（速率、地址等）
+
+      EUSCI_B_I2C_masterSendSingleByte()
+      主单字节传输
+
+      EUSCI_B_I2C_masterSendMultiByteStart()
+      EUSCI_B_I2C_masterSendMultiByteNext()
+      EUSCI_B_I2C_masterSendMultiByteStop()
+      主多字节传输
+   
+      EUSCI_B_I2C_masterReceiveSingleByte()
+      主字节接收
+
+      EUSCI_B_I2C_masterMultiByteReceiveStart()
+      EUSCI_B_I2C_masterReceiveMultiByteNext()
+      EUSCI_B_I2C_masterReceiveMultiByteFinish()
+      EUSCI_B_I2C_masterReceiveMultiByteStop()
+     主多字节接收
+
+
+2、EUSCI_B_I2C_setSlaveAddress（ EUSCI_B_I2C_initSlave()）
+3、EUSCI_B_I2C_setMode
+4、EUSCI_B_I2C_enable
+5、EUSCI_B_I2C_enableInterrupt
+
+API相关
+     EUSCI_B_I2C_slavePutData()
+     从机传输API
+     
+     EUSCI_B_I2C_slaveGetData()
+     从站接收API
+
+
+基础库函数
+ EUSCI_B_I2C_initMaster (uint16_t baseAddress, EUSCI_B_I2C_initMasterParam∗param)；初始化I2C
+
+EUSCI_B_I2C_initSlave (uint16_t baseAddress, EUSCI_B_I2C_initSlaveParam ∗param)；初始化I2C从模块
+
+EUSCI_B_I2C_enable (uint16_t baseAddress)；使能I2C模块
+EUSCI_B_I2C_disable (uint16_t baseAddress)；禁用I2C模块
+
+EUSCI_B_I2C_setSlaveAddress (uint16_t baseAddress, uint8_t slaveAddress);设置 i2c 主机将在总线上放置的地址
+
+ EUSCI_B_I2C_setMode (uint16_t baseAddress, uint16_t mode);设置 i2c 设备的模式。
+ (数值)EUSCI_B_I2C_getMode (uint16_t baseAddress)；获取 i2c 设备的模式
+
+EUSCI_B_I2C_slavePutData (uint16_t baseAddress, uint8_t transmitData)；从 i2c 模块传输一个字节
+（数值）EUSCI_B_I2C_slaveGetData (uint16_t baseAddress)；接收一个已经发送到 i2c 模块的字节
+
+（数值）EUSCI_B_I2C_isBusBusy (uint16_t baseAddress)；查看I2C是否占线
+
+（数值）EUSCI_B_I2C_masterIsStopSent (uint16_t baseAddress)；表明 stop 是否被发送
+（数值） EUSCI_B_I2C_masterIsStartSent (uint16_t baseAddress)；显示 start 是否已经发送
+
+EUSCI_B_I2C_enableInterrupt (uint16_t baseAddress, uint16_t mask)；使能中断
+EUSCI_B_I2C_disableInterrupt (uint16_t baseAddress, uint16_t mask)；禁用中断
+EUSCI_B_I2C_clearInterrupt (uint16_t baseAddress, uint16_t mask)；清除 i2c 中断源
+
+ （数值）EUSCI_B_I2C_getInterruptStatus (uint16_t baseAddress, uint16_t mask)；获取当前中断状态
+
+ EUSCI_B_I2C_masterSendSingleByte (uint16_t baseAddress, uint8_t txData)；从主机到从机进行单字节传输
+
+（数值）EUSCI_B_I2C_masterReceiveSingleByte (uint16_t baseAddress)；从服务器接收字节信号
+
+（bool）EUSCI_B_I2C_masterSendSingleByteWithTimeout (uint16_t baseAddress, uint8_ttxData, uint32_t timeout)；用超时从主机到从机进行单字节传输
+
+EUSCI_B_I2C_masterSendMultiByteStart (uint16_t baseAddress, uint8_t txData)；开始从主机到从机的多字节传输
+
+（bool） EUSCI_B_I2C_masterSendMultiByteStartWithTimeout (uint16_t baseAddress, uint8_ttxData, uint32_t timeout)；用超时启动从主到从的多字节传输。
+
+EUSCI_B_I2C_masterSendMultiByteNext (uint16_t baseAddress, uint8_t txData)；继续从主机到从机的多字节传输
+
+（bool） EUSCI_B_I2C_masterSendMultiByteNextWithTimeout (uint16_t baseAddress, uint8_ttxData, uint32_t timeout);用超时继续从主机到从机的多字节传输。
+
+ EUSCI_B_I2C_masterSendMultiByteFinish (uint16_t baseAddress, uint8_t txData);完成从主机到从机的多字节传输
+
+(bool) EUSCI_B_I2C_masterSendMultiByteFinishWithTimeout (uint16_t baseAddress, uint8_ttxData, uint32_t timeout);用超时完成从主机到从机的多字节传输。
+
+ EUSCI_B_I2C_masterSendStart (uint16_t baseAddress);主模块使用此函数启动启动
+
+EUSCI_B_I2C_masterSendMultiByteStop (uint16_t baseAddress);在从主机到从机的多字节传输结束时发送停止字节。
+
+(bool) EUSCI_B_I2C_masterSendMultiByteStopWithTimeout (uint16_t baseAddress, uint32_ttimeout);在多字节传输结束时用超时将停止字节从主机发送到从机。
+
+void EUSCI_B_I2C_masterReceiveStart (uint16_t baseAddress); 从主机端开始接待。
+
+(数值)EUSCI_B_I2C_masterReceiveMultiByteNext (uint16_t baseAddress)；在主端一次启动一个字节的多字节接收。
+
+(数值）EUSCI_B_I2C_masterReceiveMultiByteFinish (uint16_t baseAddress);在主端完成多字节接收。
+
+(bool) EUSCI_B_I2C_masterReceiveMultiByteFinishWithTimeout (uint16_t baseAddress,uint8_t ∗txData, uint32_t timeout);在主端用超时完成多字节接收。
+
+EUSCI_B_I2C_masterReceiveMultiByteStop (uint16_t baseAddress);在主端的多字节接收结束时发送停止。
+
+EUSCI_B_I2C_enableMultiMasterMode (uint16_t baseAddress);启用多主模式。
+
+EUSCI_B_I2C_disableMultiMasterMode (uint16_t baseAddress);禁用多主模式。
+
+（数值） EUSCI_B_I2C_masterReceiveSingle (uint16_t baseAddress）；接收一个已经发送到 i2c 主模块的字节。
+
+ （数值）EUSCI_B_I2C_getReceiveBufferAddress (uint16_t baseAddress)；获取该模块的 i2c 的 rx 缓冲区的地址
+
+ （数值）EUSCI_B_I2C_getTransmitBufferAddress (uint16_t baseAddress)； 为 dma 模块获取i2c 的 tx 缓冲区的地址
+
+ EUSCI_B_I2C_setTimeout (uint16_t baseAddress, uint16_t timeout)；如果 i2c 时钟维持在低于规定时间的水平，则强制超时。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+     

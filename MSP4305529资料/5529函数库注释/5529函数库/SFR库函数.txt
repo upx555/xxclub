@@ -1,0 +1,13 @@
+ SFR_enableInterrupt (uint8_t interruptMask)；启用选定的 sfr 中断源
+
+SFR_disableInterrupt (uint8_t interruptMask)；禁用选定的 sfr 中断源
+
+（数值）SFR_getInterruptStatus (uint8_t interruptFlagMask)；返回选定的 sfr 中断标志的状态
+
+ SFR_clearInterrupt (uint8_t interruptFlagMask)；清除选定的 sfr 中断标志。
+
+ SFR_setResetPinPullResistor (uint16_t pullResistorSetup)；在∼ rst/nmi 引脚上设置拉上/拉下电阻
+
+SFR_setNMIEdge (uint16_t edgeDirection)；设置边缘方向，如果 nmi 函数处于活动状态，将从信号处断言 nmi。
+
+SFR_setResetNMIPinFunction (uint8_t resetPinFunction)；设置了∼ rst/nmi pin 的功能。

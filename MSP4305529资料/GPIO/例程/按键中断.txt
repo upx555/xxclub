@@ -1,0 +1,45 @@
+#include <msp430.h>
+#include "gpio.h"
+
+#define CPU_F ((double)1105920)//CPU主频 MCLK=11.0592MHz
+#define delay_us(x) __delay_cycles((long)(CPU_F*(double)x/1000000.0)) //微秒
+#define delay_ms(x) __delay_cycles((long)(CPU_F*(double)x/1000.0)) //毫秒
+
+int main( void )
+{
+
+    // Stop watchdog timer to prevent time out reset
+    WDTCTL = WDTPW + WDTHOLD;//关闭看门狗
+
+    GPIO_setAsOutputPin(GPIO_PORT_P1,GPIO_PIN0);//输出模式
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P2, GPIO_PIN1);//上拉
+    GPIO_enableInterrupt(GPIO_PORT_P2, GPIO_PIN1);  //使能中断
+    GPIO_selectInterruptEdge(GPIO_PORT_P2, GPIO_PIN1, GPIO_HIGH_TO_LOW_TRANSITION); //设置中断类型
+    GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN1);  //清除中断标志位
+    __bis_SR_register(GIE); //启用可屏蔽中断
+
+   while(1)// continuous loop
+    {
+
+    }
+}
+
+#pragma vector=PORT2_VECTOR     // P2口中断源
+__interrupt
+
+void Port_2 (void)              // 声明一个中断服务程序，名为Port_2()
+{
+    if(GPIO_getInterruptStatus(GPIO_PORT_P2, GPIO_PIN1))//获取中断状态
+    {
+        delay_ms(20);
+        if(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1))//检测输入
+        {
+            //P1.0 = toggle
+            GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);//翻转电平
+
+            while(!GPIO_getInputPinValue(GPIO_PORT_P2, GPIO_PIN1));//检测输入
+        }
+        //P2.1 IFG cleared
+        GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN1);////清除中断标志位
+    }
+}
